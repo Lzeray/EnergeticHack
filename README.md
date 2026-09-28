@@ -126,6 +126,24 @@ source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+В следующий раз (после первой установки) не нужно ставить зависимости
+заново — только активировать существующее окружение:
+```powershell
+# Windows, PowerShell
+.venv\Scripts\Activate.ps1
+# если ругается на политику выполнения скриптов:
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.venv\Scripts\Activate.ps1
+```
+```cmd
+:: Windows, cmd.exe
+.venv\Scripts\activate.bat
+```
+```bash
+# Linux/macOS
+source .venv/bin/activate
+```
+
 Дальше в любом случае:
 ```bash
 # демо-прогон без веб-сервера: сеет фикстуры и генерирует .md для всех демо-профилей
