@@ -25,7 +25,7 @@ class TelegramPublicAdapter(SourceAdapter):
         return super().fetch_raw(config)
 
     def parse(self, raw: str, config: dict) -> list[SourceRecord]:
-        soup = BeautifulSoup(raw, "lxml")
+        soup = BeautifulSoup(raw, "html.parser")
         records: list[SourceRecord] = []
 
         for message in soup.select("div.tgme_widget_message"):

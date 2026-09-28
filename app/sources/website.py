@@ -37,7 +37,7 @@ class WebsiteAdapter(SourceAdapter):
         title_selector = config.get("title_selector")
         excerpt_selector = config.get("excerpt_selector")
 
-        soup = BeautifulSoup(raw, "lxml")
+        soup = BeautifulSoup(raw, "html.parser")
         seen_urls: set[str] = set()
         records: list[SourceRecord] = []
 

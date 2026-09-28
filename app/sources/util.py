@@ -14,7 +14,7 @@ _BLANK_LINES_RE = re.compile(r"\n{3,}")
 def strip_html(html: str) -> str:
     if not html:
         return ""
-    soup = BeautifulSoup(html, "lxml")
+    soup = BeautifulSoup(html, "html.parser")
     for tag in soup(["script", "style"]):
         tag.decompose()
     text = soup.get_text("\n")
