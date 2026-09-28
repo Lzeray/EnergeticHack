@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Дайджест — EnergeticHack{% endblock %}
+{% block content %}
+<h1>Дайджест</h1>
+<p class="subtitle">Ежедневный — для технических специалистов, ежемесячный — для менеджмента. Каждый пункт содержит ссылку на первоисточник.</p>
+
+{% if not profiles %}
+  <div class="empty-state">Сначала создайте профиль интересов на странице «Профили интересов».</div>
+{% else %}
+<div class="toolbar">
+  <form method="get" action="/digest" style="display:flex; gap:10px; align-items:center;">
+    <div>
+      <label>Профиль</label>
+      <select name="profile_id" onchange="this.form.submit()">
+        {% for p in profiles %}
+        <option value="{{ p.id }}" {{ 'selected' if profile and p.id == profile.id }}>{{ p.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label>Период</label>
+      <select name="period_type" onchange="this.form.submit()">
+        <option value="daily" {{ 'selected' if period_type == 'daily' }}>Ежедневный</option>
+        <option value="monthly" {{ 'selected' if period_type == 'monthly' }}>Ежемесячный</option>
+      </select>
+    </div>
+  </form>
+  <form method="post" action="/digest/generate">
+    <input type="hidden" name="profile_id" value="{{ profile.id if profile else '' }}">
+    <input type="hidden" name="period_type" value="{{ period_type }}">
+    <button type="submit">Сгенерировать дайджест</button>
+  </form>
+  {% if digest_run %}
+  <a class="btn btn-secondary" href="/digest/{{ digest_run.id }}/markdown">Скачать .md</a>
+  {% endif %}
+</div>
+
+{% if not digest_run %}
+  <div class="empty-state">Дайджест ещё не генерировался для этого профиля и периода. Нажмите «Сгенерировать дайджест».</div>
+{% else %}
+  <div class="stats-line">
+    Сгенерировано <b>{{ digest_run.generated_at | fmtdt }}</b> ·
+    Источников: <b>{{ digest_run.stats.source_count }}</b> ·
+    Материалов рассмотрено: <b>{{ digest_run.stats.considered_count }}</b> ·
+    Отобрано: <b>{{ digest_run.stats.selected_count }}</b> ·
+    Дублей объединено: <b>{{ digest_run.stats.dedup_merged_count }}</b>
+  </div>
+
+  {% for cluster_label, items in groups %}
+  <div class="cluster-section">
+    <div class="cluster-title">{{ cluster_label }}</div>
+    {% for item in items %}
+    <div class="card">
+      <p class="card-title"><a href="{{ item.article.url }}" target="_blank" rel="noopener">{{ item.article.title }}</a></p>
+      <p class="card-summary">{{ item.summary }}</p>
+      <div class="card-meta">
+        Источник: <a href="{{ item.article.url }}" target="_blank" rel="noopener">{{ item.article.source.name }}</a>
+        · {{ item.article.published_at | fmtdt }}
+      </div>
+      {% if item.article.tags %}
+      <div class="card-meta">
+        {% for tag in item.article.tags %}<span class="tag">{{ tag }}</span>{% endfor %}
+      </div>
+      {% endif %}
+      <span class="why-toggle">почему выбрано ▾</span>
+      <div class="why-details">
+        релевантность (BM25): {{ "%.2f"|format(item.why.bm25) }} ·
+        свежесть: {{ "%.2f"|format(item.why.recency) }} ·
+        доверие к источнику: {{ "%.2f"|format(item.why.source_trust) }} ·
+        фидбек: {{ "%.2f"|format(item.why.feedback) }}
+        {% if item.why.matched_keywords %}<br>совпадения с профилем: {{ item.why.matched_keywords | join(", ") }}{% endif %}
+      </div>
+      <div class="feedback-row" data-profile-id="{{ profile.id }}" data-article-id="{{ item.article_id }}">
+        <button class="fb-btn {{ 'selected like' if feedback_by_article.get(item.article_id) == 'like' }}" data-action="like">👍 релевантно</button>
+        <button class="fb-btn {{ 'selected dislike' if feedback_by_article.get(item.article_id) == 'dislike' }}" data-action="dislike">👎 нерелевантно</button>
+        <span class="fb-status"></span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+{% endif %}
+{% endif %}
+{% endblock %}

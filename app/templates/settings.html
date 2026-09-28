@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Настройки — EnergeticHack{% endblock %}
+{% block content %}
+<h1>Настройки</h1>
+<p class="subtitle">LLM используется для саммари статей и подписи тематических разделов. Если провайдер недоступен, сервис автоматически переключается на экстрактивное саммари (первые предложения статьи) — дайджест генерируется всегда.</p>
+
+<form method="post" action="/settings" class="card">
+  <div class="field">
+    <label>Провайдер</label>
+    <select name="llm_provider">
+      <option value="ollama" {{ 'selected' if config.llm_provider == 'ollama' }}>Ollama (локально, бесплатно)</option>
+      <option value="openai" {{ 'selected' if config.llm_provider == 'openai' }}>OpenAI-совместимый API / OpenRouter</option>
+      <option value="anthropic" {{ 'selected' if config.llm_provider == 'anthropic' }}>Anthropic Claude API</option>
+      <option value="none" {{ 'selected' if config.llm_provider == 'none' }}>Без LLM (только экстрактивное саммари)</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Модель (для Ollama/OpenAI-совместимого)</label>
+    <input type="text" name="llm_model" value="{{ config.llm_model }}">
+  </div>
+  <div class="field">
+    <label>Ollama base URL</label>
+    <input type="text" name="ollama_base_url" value="{{ config.ollama_base_url }}">
+  </div>
+  <div class="field">
+    <label>OpenAI-совместимый base URL</label>
+    <input type="text" name="openai_base_url" value="{{ config.openai_base_url }}">
+  </div>
+  <div class="field">
+    <label>OpenAI-совместимый API key</label>
+    <input type="password" name="openai_api_key" value="{{ config.openai_api_key or '' }}">
+  </div>
+  <div class="field">
+    <label>Anthropic API key</label>
+    <input type="password" name="anthropic_api_key" value="{{ config.anthropic_api_key or '' }}">
+  </div>
+  <div class="field">
+    <label>Anthropic модель</label>
+    <input type="text" name="anthropic_model" value="{{ config.anthropic_model }}">
+  </div>
+  <button type="submit">Сохранить</button>
+</form>
+
+<form method="post" action="/settings/test">
+  <button type="submit" class="btn-secondary">Проверить подключение (на сохранённых настройках)</button>
+</form>
+
+{% if test_result %}
+<div class="card" style="margin-top:16px;">
+  <div class="card-meta">Провайдер: {{ test_result.provider }} · {{ "сработал fallback на экстрактивное саммари" if test_result.used_fallback else "ответ получен от LLM" }}</div>
+  <p class="card-summary">{{ test_result.summary }}</p>
+</div>
+{% endif %}
+{% endblock %}

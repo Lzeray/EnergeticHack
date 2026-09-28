@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Сравнение профилей — EnergeticHack{% endblock %}
+{% block content %}
+<h1>Сравнение профилей</h1>
+<p class="subtitle">Один и тот же срез публикаций прогоняется через два профиля интересов — показывает, как меняется отбор при смене интересов.</p>
+
+<form method="get" action="/compare" class="toolbar">
+  <div>
+    <label>Профиль A</label>
+    <select name="profile_a_id">
+      {% for p in profiles %}<option value="{{ p.id }}" {{ 'selected' if profile_a_id == p.id }}>{{ p.name }}</option>{% endfor %}
+    </select>
+  </div>
+  <div>
+    <label>Профиль B</label>
+    <select name="profile_b_id">
+      {% for p in profiles %}<option value="{{ p.id }}" {{ 'selected' if profile_b_id == p.id }}>{{ p.name }}</option>{% endfor %}
+    </select>
+  </div>
+  <div>
+    <label>Период</label>
+    <select name="period_type">
+      <option value="daily" {{ 'selected' if period_type == 'daily' }}>Ежедневный</option>
+      <option value="monthly" {{ 'selected' if period_type == 'monthly' }}>Ежемесячный</option>
+    </select>
+  </div>
+  <button type="submit">Сравнить</button>
+</form>
+
+{% if result %}
+<div class="stats-line">
+  Пересечение отобранного: <b>{{ result.overlap_pct }}%</b> ·
+  У A рассмотрено {{ result.stats_a.considered_count }}, отобрано {{ result.stats_a.selected_count }} ·
+  У B рассмотрено {{ result.stats_b.considered_count }}, отобрано {{ result.stats_b.selected_count }}
+</div>
+
+<div class="grid-2">
+  <div>
+    <div class="cluster-title">Только у «{{ result.profile_a.name }}» ({{ result.only_a | length }})</div>
+    {% for r in result.only_a %}
+    <div class="card">
+      <p class="card-title"><a href="{{ r.article.url }}" target="_blank" rel="noopener">{{ r.article.title }}</a></p>
+      <div class="card-meta">{{ r.article.source_name }} · score {{ "%.2f"|format(r.score) }}</div>
+    </div>
+    {% else %}<div class="empty-state">Нет уникальных материалов</div>{% endfor %}
+  </div>
+  <div>
+    <div class="cluster-title">Только у «{{ result.profile_b.name }}» ({{ result.only_b | length }})</div>
+    {% for r in result.only_b %}
+    <div class="card">
+      <p class="card-title"><a href="{{ r.article.url }}" target="_blank" rel="noopener">{{ r.article.title }}</a></p>
+      <div class="card-meta">{{ r.article.source_name }} · score {{ "%.2f"|format(r.score) }}</div>
+    </div>
+    {% else %}<div class="empty-state">Нет уникальных материалов</div>{% endfor %}
+  </div>
+</div>
+
+<div class="cluster-title">Пересечение ({{ result.overlap | length }})</div>
+{% for r in result.overlap %}
+<div class="card">
+  <p class="card-title"><a href="{{ r.article.url }}" target="_blank" rel="noopener">{{ r.article.title }}</a></p>
+  <div class="card-meta">{{ r.article.source_name }}</div>
+</div>
+{% else %}<div class="empty-state">Нет пересечения</div>{% endfor %}
+{% endif %}
+{% endblock %}

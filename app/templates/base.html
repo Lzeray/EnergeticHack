@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}EnergeticHack{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">EH</span>
+        <span class="brand-name">EnergeticHack</span>
+      </div>
+      <nav class="nav">
+        <a href="/digest" class="nav-link {{ 'active' if active_nav == 'digest' }}">Дайджест</a>
+        <a href="/sources" class="nav-link {{ 'active' if active_nav == 'sources' }}">Источники</a>
+        <a href="/profiles" class="nav-link {{ 'active' if active_nav == 'profiles' }}">Профили интересов</a>
+        <a href="/compare" class="nav-link {{ 'active' if active_nav == 'compare' }}">Сравнение профилей</a>
+        <a href="/metrics" class="nav-link {{ 'active' if active_nav == 'metrics' }}">Метрики качества</a>
+        <a href="/settings" class="nav-link {{ 'active' if active_nav == 'settings' }}">Настройки</a>
+      </nav>
+      <div class="sidebar-footer">Прототип · ИТ/ИБ-дайджест</div>
+    </aside>
+    <main class="content">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

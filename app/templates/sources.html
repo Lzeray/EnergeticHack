@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Источники — EnergeticHack{% endblock %}
+{% block content %}
+<h1>Источники</h1>
+<p class="subtitle">RSS/Atom, сайты (best-effort парсинг листинга), публичные Telegram-каналы, датасеты организаторов (JSON/CSV) и произвольный прокси-адаптер под любой API.</p>
+
+{% if not sources %}
+  <div class="empty-state">Источников пока нет. Добавьте первый ниже.</div>
+{% else %}
+<table>
+  <thead>
+    <tr><th>Название</th><th>Тип</th><th>Категория</th><th>Приоритет</th><th>Статус</th><th>Последний фетч</th><th>Материалов</th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for s in sources %}
+    <tr>
+      <td>{{ s.name }}{% if not s.enabled %} <span class="tag">выключен</span>{% endif %}</td>
+      <td class="mono">{{ s.type }}</td>
+      <td>{{ s.category or "—" }}</td>
+      <td>{{ s.priority }}</td>
+      <td>
+        {% if s.last_status == 'ok' %}<span class="badge badge-ok">ok</span>
+        {% elif s.last_status == 'error' %}<span class="badge badge-error" title="{{ s.last_error }}">error</span>
+        {% else %}<span class="badge badge-never">никогда</span>{% endif %}
+      </td>
+      <td>{{ s.last_fetch_at | fmtdt }}</td>
+      <td>{{ s.last_item_count }}</td>
+      <td style="white-space:nowrap;">
+        <form method="post" action="/sources/{{ s.id }}/fetch" style="display:inline;"><button class="btn-secondary" type="submit">Обновить</button></form>
+        <form method="post" action="/sources/{{ s.id }}/toggle" style="display:inline;"><button class="btn-secondary" type="submit">{{ "Выключить" if s.enabled else "Включить" }}</button></form>
+        <form method="post" action="/sources/{{ s.id }}/delete" style="display:inline;" onsubmit="return confirm('Удалить источник и все его статьи?');"><button class="btn-danger" type="submit">Удалить</button></form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<h2>Добавить источник</h2>
+<form method="post" action="/sources" class="card">
+  <div class="field">
+    <label>Название</label>
+    <input type="text" name="name" required>
+  </div>
+  <div class="field">
+    <label>Тип</label>
+    <select name="type">
+      {% for t in known_types %}<option value="{{ t }}">{{ t }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label>URL / канал / путь к файлу</label>
+    <input type="text" name="url_or_path" required placeholder="https://... или @channel или fixtures/file.json">
+    <p class="subtitle" style="margin:6px 0 0;">
+      rss/website — URL страницы; telegram — имя канала (без @ необязательно); dataset — путь относительно data/fixtures;
+      proxy — URL API-эндпоинта организаторов (доп. настройка заголовков/маппинга полей — через редактирование конфигурации источника в БД для продвинутых случаев).
+    </p>
+  </div>
+  <div class="field">
+    <label>Категория (произвольно: vendor / media / government / community / research)</label>
+    <input type="text" name="category" placeholder="media">
+  </div>
+  <div class="field">
+    <label>Приоритет (вес доверия, по умолчанию 1.0)</label>
+    <input type="number" step="0.05" name="priority" value="1.0">
+  </div>
+  <button type="submit">Добавить источник</button>
+</form>
+{% endblock %}

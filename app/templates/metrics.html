@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Метрики качества — EnergeticHack{% endblock %}
+{% block content %}
+<h1>Метрики качества сервиса</h1>
+<p class="subtitle">Расчёт на {{ metrics.generated_at | fmtdt }}. Методика — см. docs/metrics.md.</p>
+
+<div class="metric-tiles">
+  <div class="tile"><div class="tile-value">{{ metrics.source_count }}</div><div class="tile-label">Источников подключено</div></div>
+  <div class="tile"><div class="tile-value">{{ metrics.healthy_source_count }}</div><div class="tile-label">Источников без ошибок</div></div>
+  <div class="tile"><div class="tile-value">{{ metrics.article_count }}</div><div class="tile-label">Материалов в базе</div></div>
+  <div class="tile"><div class="tile-value">{{ metrics.digest_runs_total }}</div><div class="tile-label">Дайджестов сгенерировано</div></div>
+  <div class="tile"><div class="tile-value">{{ metrics.feedback_count }}</div><div class="tile-label">Отзывов от пользователей</div></div>
+</div>
+
+<h2>Охват по языкам</h2>
+<table>
+  <thead><tr><th>Язык</th><th>Материалов</th></tr></thead>
+  <tbody>
+    {% for lang, count in metrics.language_coverage.items() %}
+    <tr><td>{{ lang }}</td><td>{{ count }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Охват по категориям источников</h2>
+<table>
+  <thead><tr><th>Категория</th><th>Источников</th></tr></thead>
+  <tbody>
+    {% for cat, count in metrics.source_category_coverage.items() %}
+    <tr><td>{{ cat }}</td><td>{{ count }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>По профилям (последний дайджест каждого)</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Профиль</th><th>Отобрано / рассмотрено</th><th>Дубли</th>
+      <th>Precision@10</th><th>Ср. возраст материала, ч</th><th>Оценка сэконом. времени, мин</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for pm in metrics.per_profile %}
+    <tr>
+      <td>{{ pm.profile_name }}</td>
+      {% if pm.has_digest %}
+      <td>{{ pm.selected_count }} / {{ pm.considered_count }}</td>
+      <td>{{ (pm.duplicate_rate * 100) | round(1) }}%</td>
+      <td>{{ (pm.precision_at_10 * 100) | round(1) ~ '%' if pm.precision_at_10 is not none else "нет фидбека" }}</td>
+      <td>{{ pm.avg_selected_age_hours if pm.avg_selected_age_hours is not none else "—" }}</td>
+      <td>{{ pm.estimated_minutes_saved }}</td>
+      {% else %}
+      <td colspan="5">Дайджест ещё не генерировался</td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Профили интересов — EnergeticHack{% endblock %}
+{% block content %}
+<h1>Профили интересов</h1>
+<p class="subtitle">Свободный текст интересов. Необязательный блок «Исключить: тема1, тема2» в конце текста жёстко исключает материалы по этим темам из дайджеста.</p>
+
+{% for p in profiles %}
+<form method="post" action="/profiles/{{ p.id }}" class="card">
+  <div class="field">
+    <label>Название</label>
+    <input type="text" name="name" value="{{ p.name }}" required>
+  </div>
+  <div class="field">
+    <label>Аудитория</label>
+    <select name="audience">
+      <option value="technical" {{ 'selected' if p.audience == 'technical' }}>Технические специалисты (ежедневно)</option>
+      <option value="management" {{ 'selected' if p.audience == 'management' }}>Менеджмент (ежемесячно)</option>
+      <option value="custom" {{ 'selected' if p.audience == 'custom' }}>Свой профиль</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Интересы</label>
+    <textarea name="interests_text" rows="4">{{ p.interests_text }}</textarea>
+  </div>
+  <div style="display:flex; gap:8px;">
+    <button type="submit">Сохранить</button>
+  </div>
+</form>
+<form method="post" action="/profiles/{{ p.id }}/delete" style="margin: -8px 0 20px;" onsubmit="return confirm('Удалить профиль вместе с его фидбеком?');">
+  <button class="btn-ghost" type="submit">Удалить профиль «{{ p.name }}»</button>
+</form>
+{% endfor %}
+
+<h2>Новый профиль</h2>
+<form method="post" action="/profiles" class="card">
+  <div class="field">
+    <label>Название</label>
+    <input type="text" name="name" required placeholder="Например: SOC-аналитик">
+  </div>
+  <div class="field">
+    <label>Аудитория</label>
+    <select name="audience">
+      <option value="technical">Технические специалисты (ежедневно)</option>
+      <option value="management">Менеджмент (ежемесячно)</option>
+      <option value="custom" selected>Свой профиль</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Интересы</label>
+    <textarea name="interests_text" rows="4" placeholder="Приоритет: ransomware, CVE, фишинг. Исключить: гаджеты, инвестиции"></textarea>
+  </div>
+  <button type="submit">Создать профиль</button>
+</form>
+{% endblock %}
