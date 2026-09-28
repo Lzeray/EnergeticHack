@@ -102,11 +102,32 @@ Anthropic / без LLM) и проверка подключения одной к
 
 ## Быстрый старт
 
+**Требования:** Python 3.11–3.13 (совсем свежие релизы вроде 3.14 могут
+ещё не иметь готовых wheel-пакетов под numpy/scikit-learn на некоторых
+платформах — тогда pip будет пытаться собирать их из исходников и падать).
+
+Самый простой способ — запустить скрипт настройки, он сам найдёт
+подходящую версию Python (даже если в системе по умолчанию стоит другая) и
+поставит окружение:
+
+```bash
+# Linux/macOS
+./setup_unix.sh
+```
+```powershell
+# Windows — просто дважды кликнуть setup_windows.bat, или в PowerShell:
+.\setup_windows.bat
+```
+
+Либо вручную:
 ```bash
 python3 -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+```
 
+Дальше в любом случае:
+```bash
 # демо-прогон без веб-сервера: сеет фикстуры и генерирует .md для всех демо-профилей
 python -m scripts.run_demo --period daily
 # результат: data/digests/*.md
