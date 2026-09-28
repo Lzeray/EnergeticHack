@@ -56,11 +56,15 @@ if errorlevel 1 (
 
 echo.
 echo === Done ===
-echo Next, in this same window:
+echo IMPORTANT: if you ran this by double-clicking, or from PowerShell,
+echo the activated environment does NOT carry over to your terminal -
+echo this script runs in its own process. Before the commands below,
+echo activate it yourself in YOUR terminal window:
+echo.
+echo   In PowerShell: .venv\Scripts\Activate.ps1
+echo   In cmd:        .venv\Scripts\activate.bat
+echo.
+echo You should see "(.venv)" at the start of the prompt. Then:
 echo   python -m scripts.run_demo --period daily
 echo   uvicorn app.main:app --host 0.0.0.0 --port 8899
-echo.
-echo Next time, before running the app, activate the environment:
-echo   In cmd:        .venv\Scripts\activate.bat
-echo   In PowerShell: .venv\Scripts\Activate.ps1
 pause

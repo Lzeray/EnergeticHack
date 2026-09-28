@@ -126,23 +126,29 @@ source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-В следующий раз (после первой установки) не нужно ставить зависимости
-заново — только активировать существующее окружение:
+**Важно для Windows:** `setup_windows.bat` ставит окружение в своём
+собственном процессе `cmd.exe` — после того как скрипт завершится, в
+твоём PowerShell/cmd venv **не активирован** (так работает Windows,
+активация не переживает выход из дочернего процесса). Это касается и
+первого запуска сразу после `setup_windows.bat`, и всех последующих —
+каждый раз, открывая новое окно терминала, сначала активируй:
 ```powershell
-# Windows, PowerShell
+# PowerShell
 .venv\Scripts\Activate.ps1
 # если ругается на политику выполнения скриптов:
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .venv\Scripts\Activate.ps1
 ```
 ```cmd
-:: Windows, cmd.exe
+:: cmd.exe
 .venv\Scripts\activate.bat
 ```
 ```bash
 # Linux/macOS
 source .venv/bin/activate
 ```
+В начале строки должно появиться `(.venv)` — только после этого
+запускать команды ниже.
 
 Дальше в любом случае:
 ```bash
