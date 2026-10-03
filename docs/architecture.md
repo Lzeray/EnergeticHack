@@ -19,7 +19,7 @@ Article в БД (нормализация языка, извлечение CVE/C
     ▼
 Диверсифицированный top-K (кап на долю одного источника, round-robin довыбор)
     ▼
-Кластеризация тем: TF-IDF + KMeans, подпись кластера — LLM или TF-IDF fallback
+Кластеризация тем: TF-IDF + LSA (SVD) + KMeans, подпись кластера — LLM или TF-IDF fallback
     ▼
 Саммари каждой статьи: LLM-провайдер (pluggable) → extractive fallback при недоступности
     ▼
@@ -31,7 +31,7 @@ Markdown (+ персистентность в БД) → data/digests/*.md, от�
 | Модуль | Ответственность |
 |---|---|
 | `app/sources/*` | Адаптеры источников: `base.SourceAdapter` (fetch_raw/parse), `rss`, `website`, `telegram`, `dataset`, `proxy`, `registry` |
-| `app/pipeline/*` | `normalize` (язык, CVE/CWE-теги), `dedup`, `ranking` (BM25 + фидбек + свежесть + доверие), `clustering` (TF-IDF/KMeans), `types` (DB-agnostic dataclasses) |
+| `app/pipeline/*` | `normalize` (язык, CVE/CWE-теги), `dedup`, `ranking` (BM25 + фидбек + свежесть + доверие), `clustering` (TF-IDF + LSA/SVD + KMeans), `types` (DB-agnostic dataclasses) |
 | `app/llm/*` | `base.LLMProvider` интерфейс, `ollama_provider`, `openai_compatible_provider`, `anthropic_provider`, `extractive_fallback`, `factory.build_provider` (+ `FallbackProvider` graceful degradation) |
 | `app/digest/*` | `builder.select_for_profile` / `build_digest` (оркестрация), `markdown.render_markdown` (детерминированный рендер) |
 | `app/api/*` | FastAPI-роутеры: sources, profiles, digest, feedback, metrics, settings, compare |
