@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app import models
 from app.config import settings
+from app.digest.action import derive_action_line
 from app.digest.markdown import render_markdown
 from app.llm.base import LLMProvider
 from app.pipeline.clustering import cluster_articles
@@ -58,7 +59,7 @@ def _as_utc(value: dt.datetime | None) -> dt.datetime | None:
     return value if value.tzinfo is not None else value.replace(tzinfo=dt.timezone.utc)
 
 
-def _to_pipeline_article(article: models.Article) -> PipelineArticle:
+def to_pipeline_article(article: models.Article) -> PipelineArticle:
     return PipelineArticle(
         id=article.id,
         source_id=article.source_id,
@@ -120,7 +121,7 @@ def select_for_profile(
     half_life = RECENCY_HALF_LIFE_HOURS.get(period_type, 48.0)
 
     db_articles = _candidate_articles(session, source_ids, period_type, reference_time)
-    pipeline_articles = [_to_pipeline_article(a) for a in db_articles]
+    pipeline_articles = [to_pipeline_article(a) for a in db_articles]
     by_id = {a.id: a for a in pipeline_articles}
 
     dedup_groups = compute_dedup_groups(
@@ -181,6 +182,7 @@ def build_digest(
                 why=ranked_item.why,
                 summary=summary,
                 cluster_label=label,
+                action=derive_action_line(ranked_item.article, audience),
                 corroborating=corroborating_by_rep.get(ranked_item.article.id, []),
             )
             rendered_items.append(item)
@@ -218,6 +220,7 @@ def build_digest(
                 rank_score=item.score,
                 why=item.why,
                 summary=item.summary,
+                action=item.action,
                 order_index=idx,
             )
         )

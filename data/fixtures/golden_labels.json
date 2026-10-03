@@ -1,0 +1,29 @@
+{
+  "_comment": "Hand-labeled relevance (1 = relevant, 0 = not) for the demo fixture corpus against two demo profiles. Labeled by reading each article's topic against the profile's stated interests, independently of the ranking algorithm, so scripts/evaluate.py measures something real rather than grading the ranker against its own logic.",
+  "Демо: SOC-аналитик": {
+    "tw-1": 1, "tw-2": 1, "sw-1": 1, "sw-2": 1,
+    "co-1": 0, "co-2": 1, "co-3": 0,
+    "scs-1": 0, "scs-2": 0, "scs-3": 0,
+    "rucert-1": 1, "rucert-2": 1,
+    "gov-1": 1, "gov-2": 1,
+    "apt-1": 1, "apt-2": 1,
+    "rt-1": 1, "rt-2": 1, "rt-3": 1, "rt-4": 1,
+    "vb-1": 1, "vb-2": 1, "vb-3": 1,
+    "as-1": 0, "as-2": 0, "as-3": 0,
+    "iw-1": 1, "iw-2": 1, "iw-3": 0,
+    "gp-1": 0, "gp-2": 0, "ft-1": 0, "ft-2": 0, "ab-1": 0, "ab-2": 0
+  },
+  "Демо: Platform/AppSec-инженер": {
+    "tw-1": 1, "tw-2": 0, "sw-1": 1, "sw-2": 0,
+    "co-1": 1, "co-2": 1, "co-3": 1,
+    "scs-1": 1, "scs-2": 1, "scs-3": 1,
+    "rucert-1": 0, "rucert-2": 0,
+    "gov-1": 0, "gov-2": 0,
+    "apt-1": 0, "apt-2": 0,
+    "rt-1": 0, "rt-2": 0, "rt-3": 0, "rt-4": 0,
+    "vb-1": 0, "vb-2": 0, "vb-3": 0,
+    "as-1": 1, "as-2": 1, "as-3": 1,
+    "iw-1": 1, "iw-2": 0, "iw-3": 1,
+    "gp-1": 0, "gp-2": 0, "ft-1": 0, "ft-2": 0, "ab-1": 0, "ab-2": 0
+  }
+}

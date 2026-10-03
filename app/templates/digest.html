@@ -62,6 +62,9 @@
         {% for tag in item.article.tags %}<span class="tag">{{ tag }}</span>{% endfor %}
       </div>
       {% endif %}
+      {% if item.action %}
+      <div class="card-action">Рекомендация: {{ item.action }}</div>
+      {% endif %}
       <span class="why-toggle">почему выбрано ▾</span>
       <div class="why-details">
         релевантность (BM25): {{ "%.2f"|format(item.why.bm25) }} ·

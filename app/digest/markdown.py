@@ -68,6 +68,8 @@ def render_markdown(
             lines.append("")
             lines.append(f"- Источник: [{art.source_name}]({art.url}) · {_fmt_dt(art.published_at)}")
             lines.append(f"- Почему выбрано: {_why_line(item.why)}")
+            if item.action:
+                lines.append(f"- Рекомендация: {item.action}")
             if art.tags:
                 tags_str = ", ".join(f"`{t}`" for t in art.tags)
                 lines.append(f"- Теги: {tags_str}")

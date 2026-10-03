@@ -96,6 +96,7 @@ class DigestArticle(Base):
     rank_score: Mapped[float] = mapped_column(Float, default=0.0)
     why: Mapped[dict] = mapped_column(JSON, default=dict)
     summary: Mapped[str] = mapped_column(Text, default="")
+    action: Mapped[str] = mapped_column(Text, default="")
     order_index: Mapped[int] = mapped_column(Integer, default=0)
 
     digest_run: Mapped[DigestRun] = relationship(back_populates="items")

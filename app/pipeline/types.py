@@ -54,4 +54,5 @@ class FinalDigestItem:
     why: dict
     summary: str
     cluster_label: str
+    action: str = ""
     corroborating: list[PipelineArticle] = field(default_factory=list)
