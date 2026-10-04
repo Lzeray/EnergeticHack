@@ -13,6 +13,7 @@ def client(tmp_path, monkeypatch):
     from app.config import settings
 
     monkeypatch.setattr(settings, "digests_dir", tmp_path)
+    monkeypatch.setattr(settings, "settings_locked", False)
 
     from app.db import Base, get_session
     from app.main import app
@@ -100,3 +101,25 @@ def test_deleting_source_keeps_digest_and_metrics_working(client):
 
     assert client.get("/metrics").status_code == 200
     assert client.get("/digest", params={"profile_id": 1, "period_type": "daily"}).status_code == 200
+
+
+def test_settings_page_never_renders_api_keys(client):
+    client.post("/settings", data={"llm_provider": "openai", "openai_api_key": "sk-secret-123"})
+    assert "sk-secret-123" not in client.get("/settings").text
+
+    from app.db import get_session
+    from app.main import app
+    from app.runtime_settings import get_llm_config
+
+    client.post("/settings", data={"llm_provider": "openai", "openai_api_key": ""})
+    session = next(app.dependency_overrides[get_session]())
+    assert get_llm_config(session)["openai_api_key"] == "sk-secret-123"
+
+
+def test_locked_settings_reject_changes(client, monkeypatch):
+    from app.config import settings
+
+    monkeypatch.setattr(settings, "settings_locked", True)
+    resp = client.post("/settings", data={"llm_provider": "openai", "openai_base_url": "http://192.168.0.1"})
+    assert resp.status_code == 403
+    assert client.get("/settings").status_code == 200

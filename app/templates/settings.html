@@ -4,7 +4,12 @@
 <h1>Настройки</h1>
 <p class="subtitle">LLM используется для саммари статей и подписи тематических разделов. Если провайдер недоступен, сервис автоматически переключается на экстрактивное саммари (первые предложения статьи) — дайджест генерируется всегда.</p>
 
+{% if locked %}
+<p class="subtitle">Изменение настроек отключено на этом экземпляре сервиса.</p>
+{% endif %}
+
 <form method="post" action="/settings" class="card">
+  <fieldset {{ 'disabled' if locked }} style="border:0;padding:0;margin:0;">
   <div class="field">
     <label>Провайдер</label>
     <select name="llm_provider">
@@ -28,17 +33,18 @@
   </div>
   <div class="field">
     <label>OpenAI-совместимый API key</label>
-    <input type="password" name="openai_api_key" value="{{ config.openai_api_key or '' }}">
+    <input type="password" name="openai_api_key" value="" placeholder="{{ 'сохранён — оставьте пустым, чтобы не менять' if config.openai_api_key }}">
   </div>
   <div class="field">
     <label>Anthropic API key</label>
-    <input type="password" name="anthropic_api_key" value="{{ config.anthropic_api_key or '' }}">
+    <input type="password" name="anthropic_api_key" value="" placeholder="{{ 'сохранён — оставьте пустым, чтобы не менять' if config.anthropic_api_key }}">
   </div>
   <div class="field">
     <label>Anthropic модель</label>
     <input type="text" name="anthropic_model" value="{{ config.anthropic_model }}">
   </div>
   <button type="submit">Сохранить</button>
+  </fieldset>
 </form>
 
 <form method="post" action="/settings/test">

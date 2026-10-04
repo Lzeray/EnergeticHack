@@ -1,5 +1,7 @@
 import json
 
+import pytest
+
 from app.sources.dataset import DatasetAdapter
 from app.sources.proxy import ProxyAdapter
 from app.sources.rss import RssAdapter
@@ -78,3 +80,15 @@ def test_proxy_adapter_navigates_nested_items_path():
     records = ProxyAdapter().parse(payload, {"items_path": "data.items"})
     assert len(records) == 1
     assert records[0].external_id == "9"
+
+
+def test_dataset_adapter_refuses_paths_outside_fixtures(tmp_path):
+    secret = tmp_path / "secret.json"
+    secret.write_text("[]", encoding="utf-8")
+    for path in [str(secret), "../../../etc/passwd", "../app.db"]:
+        with pytest.raises(ValueError):
+            DatasetAdapter().fetch_raw({"path": path})
+
+
+def test_dataset_adapter_reads_fixture_by_relative_path():
+    assert DatasetAdapter().fetch_raw({"path": "articles_sample.json"}).lstrip().startswith("[")

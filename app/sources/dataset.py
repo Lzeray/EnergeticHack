@@ -5,7 +5,6 @@ import datetime as dt
 import hashlib
 import io
 import json
-from pathlib import Path
 
 from app.config import settings
 from app.sources.base import SourceAdapter, SourceRecord
@@ -84,9 +83,10 @@ class DatasetAdapter(SourceAdapter):
 
     def fetch_raw(self, config: dict) -> str:
         if "path" in config:
-            path = Path(config["path"])
-            if not path.is_absolute():
-                path = settings.fixtures_dir / path
+            base = settings.fixtures_dir.resolve()
+            path = (base / config["path"]).resolve()
+            if not path.is_relative_to(base):
+                raise ValueError(f"Dataset path must be inside data/fixtures: {config['path']!r}")
             return path.read_text(encoding="utf-8")
         return super().fetch_raw(config)
 

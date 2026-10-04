@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
+from app.config import settings
 from app.db import get_session
 from app.llm.factory import build_provider
 from app.runtime_settings import get_llm_config, set_llm_config
@@ -16,7 +17,9 @@ router = APIRouter()
 def view_settings(request: Request, session: Session = Depends(get_session)):
     config = get_llm_config(session)
     return templates.TemplateResponse(
-        request, "settings.html", {"config": config, "active_nav": "settings", "test_result": None}
+        request,
+        "settings.html",
+        {"config": config, "locked": settings.settings_locked, "active_nav": "settings", "test_result": None},
     )
 
 
@@ -31,16 +34,20 @@ def save_settings(
     anthropic_model: str = Form("claude-sonnet-5-5"),
     session: Session = Depends(get_session),
 ):
-    set_llm_config(
-        session,
+    if settings.settings_locked:
+        raise HTTPException(status_code=403, detail="Settings are locked")
+    updates = dict(
         llm_provider=llm_provider,
         llm_model=llm_model,
         ollama_base_url=ollama_base_url,
         openai_base_url=openai_base_url,
-        openai_api_key=openai_api_key or None,
-        anthropic_api_key=anthropic_api_key or None,
         anthropic_model=anthropic_model,
     )
+    if openai_api_key:
+        updates["openai_api_key"] = openai_api_key
+    if anthropic_api_key:
+        updates["anthropic_api_key"] = anthropic_api_key
+    set_llm_config(session, **updates)
     return RedirectResponse("/settings", status_code=303)
 
 
@@ -63,6 +70,7 @@ def test_settings(request: Request, session: Session = Depends(get_session)):
         "settings.html",
         {
             "config": config,
+            "locked": settings.settings_locked,
             "active_nav": "settings",
             "test_result": {"summary": result, "used_fallback": used_fallback, "provider": provider.name},
         },

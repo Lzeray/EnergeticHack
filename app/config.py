@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     anthropic_api_key: str | None = None
     anthropic_model: str = "claude-sonnet-5-5"
     llm_timeout_seconds: float = 20.0
+    settings_locked: bool = False
 
     # Ranking / digest sizing
     daily_top_k: int = 15

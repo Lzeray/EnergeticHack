@@ -46,7 +46,7 @@ Bot API. Работает только для каналов с включённ
   "field_map": {"id": "id", "url": "link", "title": "headline", "text": "body", "date": "published", "language": "lang"}
 }
 ```
-`path` — относительно `data/fixtures/`, либо абсолютный путь. Если
+`path` — относительно `data/fixtures/`; файлы вне этой папки не читаются. Если
 `field_map` не задан, адаптер сам пробует стандартные имена полей
 (`url`/`link`, `title`/`headline`, `text`/`body`/`summary`, ...). Это
 основной способ подключить датасеты, которые предоставят организаторы
