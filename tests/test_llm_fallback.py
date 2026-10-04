@@ -27,7 +27,7 @@ def test_fallback_provider_uses_extractive_on_failure():
 
     provider = FallbackProvider(_AlwaysFailsProvider(), ExtractiveProvider())
     summary = provider.summarize("Заголовок статьи", "Первое предложение. Второе предложение.")
-    assert summary  # never empty/raises
+    assert summary
     assert provider.last_error is not None
 
 

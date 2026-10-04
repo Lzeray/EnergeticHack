@@ -11,21 +11,6 @@ from app.sources.safety import validate_outbound_url
 
 
 class ProxyAdapter(SourceAdapter):
-    """Generic HTTP(S)+JSON adapter for a custom organizer/partner API whose
-    response shape isn't known in advance — point it at any endpoint and
-    describe how to find the article list and map its fields.
-
-    config: {
-      "endpoint": "https://partner.example.com/api/news",
-      "method"?: "GET" | "POST",           # default GET
-      "headers"?: {"Authorization": "Bearer ..."},
-      "params"?: {...},                      # query string for GET
-      "json_body"?: {...},                    # request body for POST
-      "items_path"?: "data.items",             # dot-path to the article list in the JSON response
-      "field_map"?: {"id": "...", "url": "...", "title": "...", "text": "...", "date": "...", "language": "..."}
-    }
-    """
-
     type_name = "proxy"
 
     def fetch_raw(self, config: dict) -> str:

@@ -16,10 +16,6 @@ def clean_text(text: str) -> str:
 
 
 def detect_language(text: str) -> str:
-    """Cheap, dependency-free heuristic: count Cyrillic vs Latin letters.
-
-    Good enough to route RU vs EN content for digest grouping without
-    pulling in a model/dictionary-based language detector."""
     sample = (text or "")[:2000]
     cyr = len(_CYRILLIC_RE.findall(sample))
     lat = len(_LATIN_RE.findall(sample))

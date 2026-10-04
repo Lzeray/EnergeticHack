@@ -23,11 +23,11 @@ class LLMProvider(ABC):
 
     @abstractmethod
     def summarize(self, title: str, text: str, audience: str = "technical") -> str:
-        """Returns a short (2-3 sentence) Russian summary of one article."""
+        pass
 
     @abstractmethod
     def label_cluster(self, titles: list[str]) -> str:
-        """Returns a short Russian label (2-5 words) for a group of article titles."""
+        pass
 
 
 class LLMUnavailableError(RuntimeError):

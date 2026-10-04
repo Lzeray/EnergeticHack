@@ -1,10 +1,3 @@
-"""End-to-end CLI demo: seeds fixtures if needed, builds a digest for every
-demo profile without starting the web server, and prints where the Markdown
-landed. This is the fastest way to show "publications in -> digest out".
-
-Usage: python -m scripts.run_demo [--period daily|monthly]
-"""
-
 from __future__ import annotations
 
 import argparse

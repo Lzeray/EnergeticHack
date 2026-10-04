@@ -1,12 +1,3 @@
-"""Measures ranking quality against a hand-labeled golden set
-(data/fixtures/golden_labels.json) instead of relying only on live user
-feedback: precision/recall/F1 at K, independent of the ranking algorithm
-being evaluated (labels were assigned by reading each article's topic
-against the profile's stated interests, not by running the ranker).
-
-Usage: python -m scripts.evaluate
-"""
-
 from __future__ import annotations
 
 import json

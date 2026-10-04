@@ -6,10 +6,6 @@ from dataclasses import dataclass, field
 
 @dataclass
 class PipelineArticle:
-    """Lightweight, DB-agnostic view of an article used across the ranking /
-    dedup / clustering pipeline, so those stages stay pure and unit-testable
-    without a database."""
-
     id: int
     source_id: int
     source_name: str

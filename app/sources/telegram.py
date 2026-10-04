@@ -10,13 +10,6 @@ from app.sources.util import strip_html
 
 
 class TelegramPublicAdapter(SourceAdapter):
-    """Reads a public Telegram channel's web preview (t.me/s/<channel>), which
-    Telegram serves without authentication for public channels. No Bot API
-    token needed; only channels with public previews enabled work.
-
-    config: {"channel": "channelname"} or {"url": "https://t.me/s/channelname"}
-    """
-
     type_name = "telegram"
 
     def fetch_raw(self, config: dict) -> str:

@@ -13,12 +13,6 @@ _TOKEN_RE = re.compile(r"[a-zA-Zа-яА-ЯёЁ0-9\-]{2,}")
 
 _EXCLUDE_MARKER_RE = re.compile(r"(?:Исключить|Exclude)\s*:\s*(.*)", re.IGNORECASE | re.DOTALL)
 
-# Blend weights for the final score. BM25 (classic probabilistic search
-# ranking, the same family of algorithm underlying most production search
-# engines) carries the most weight; recency, source trust and the
-# feedback-learning signal (a Rocchio-style relevance-feedback term: terms
-# from liked articles pull future scores up, terms from disliked ones pull
-# them down) adjust it.
 WEIGHT_BM25 = 0.55
 WEIGHT_RECENCY = 0.2
 WEIGHT_SOURCE_TRUST = 0.15
@@ -30,10 +24,6 @@ def tokenize(text: str) -> list[str]:
 
 
 def parse_profile_interests(interests_text: str) -> tuple[str, list[str]]:
-    """Splits a free-form interest profile into a (query_text, exclude_terms)
-    pair. An optional "Исключить: a, b, c" / "Exclude: a, b, c" tail names
-    hard-excluded topics; everything before it is the ranking query."""
-
     text = interests_text or ""
     match = _EXCLUDE_MARKER_RE.search(text)
     if not match:
@@ -50,10 +40,6 @@ def _token_matches(term_token: str, haystack_tokens: set[str]) -> bool:
 
 
 def _matches_any_term(haystack: str, terms: list[str]) -> bool:
-    """A term matches if every one of its words shares a >=5-char prefix
-    with some word in the haystack — a cheap way to survive Russian
-    plural/case endings (гаджет ~ гаджеты) without a real morphology
-    library."""
     haystack_tokens = set(tokenize(haystack))
     for term in terms:
         term_tokens = tokenize(term)
@@ -64,7 +50,7 @@ def _matches_any_term(haystack: str, terms: list[str]) -> bool:
 
 def _recency_score(published_at: dt.datetime | None, reference_time: dt.datetime, half_life_hours: float) -> float:
     if published_at is None:
-        return 0.3  # unknown age: mild, non-punishing default
+        return 0.3
     age_hours = max(0.0, (reference_time - published_at).total_seconds() / 3600.0)
     return math.exp(-age_hours / max(half_life_hours, 1e-6) * math.log(2))
 
@@ -121,7 +107,7 @@ def rank_articles(
             WEIGHT_BM25 * bm25_norm[idx]
             + WEIGHT_RECENCY * recency
             + WEIGHT_SOURCE_TRUST * source_norm[idx]
-            + WEIGHT_FEEDBACK * (feedback_norm + 1) / 2  # fold into [0,1]
+            + WEIGHT_FEEDBACK * (feedback_norm + 1) / 2
         )
 
         matched = [t for t in dict.fromkeys(tokens) if t in query_tokens][:6]
@@ -139,13 +125,6 @@ def rank_articles(
 
 
 def select_diverse_top_k(ranked: list[RankedArticle], k: int, max_per_source_ratio: float = 0.4) -> list[RankedArticle]:
-    """Greedy top-K selection that caps any single source's share of the
-    digest, so one prolific feed can't crowd out everything else. Once every
-    source has hit its cap, remaining slots are filled round-robin across
-    sources (each still in its own rank order) rather than back in flat rank
-    order, so a source that happens to rank first among ties doesn't also
-    claim the overflow slots that other sources need to be represented."""
-
     if k <= 0:
         return []
     max_per_source = max(1, math.ceil(k * max_per_source_ratio))
@@ -163,7 +142,7 @@ def select_diverse_top_k(ranked: list[RankedArticle], k: int, max_per_source_rat
         else:
             overflow_by_source.setdefault(source_id, []).append(item)
 
-    source_order = list(overflow_by_source)  # rank order of each source's best overflow item
+    source_order = list(overflow_by_source)
     while len(selected) < k and any(overflow_by_source.values()):
         for source_id in source_order:
             if len(selected) >= k:

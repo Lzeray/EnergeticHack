@@ -12,22 +12,6 @@ DEFAULT_LINK_SELECTOR = "a"
 
 
 class WebsiteAdapter(SourceAdapter):
-    """Best-effort generic listing-page scraper.
-
-    Extracts headline + URL + optional teaser text straight from a listing/index
-    page using configurable CSS selectors. It intentionally does NOT crawl into
-    each article (that would break the fetch/parse purity used for testing) —
-    prefer the RSS adapter, or set a per-site selector tuple, for full body text.
-
-    config: {
-      "url": str,
-      "item_selector"?: str,   # container per headline, default "article, .post, .news-item, li"
-      "link_selector"?: str,   # <a> within the item, default "a"
-      "title_selector"?: str,  # optional heading selector within the item
-      "excerpt_selector"?: str # optional teaser <p> selector within the item
-    }
-    """
-
     type_name = "website"
 
     def parse(self, raw: str, config: dict) -> list[SourceRecord]:

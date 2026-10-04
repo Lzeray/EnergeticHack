@@ -6,10 +6,6 @@ from app.llm.base import CLUSTER_LABEL_SYSTEM_PROMPT, SUMMARY_SYSTEM_PROMPT, LLM
 
 
 class OllamaProvider(LLMProvider):
-    """Talks to a local Ollama instance (https://ollama.com) — the default,
-    zero-cost, no-API-key provider. Requires `ollama serve` running and the
-    configured model pulled locally (`ollama pull <model>`)."""
-
     name = "ollama"
 
     def __init__(self, base_url: str, model: str, timeout: float = 20.0):

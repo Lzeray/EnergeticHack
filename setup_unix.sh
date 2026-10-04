@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-# EnergeticHack: setup (Linux/macOS). Picks a Python version with mature
-# wheel support (avoids the "too new, has to compile from source" trap
-# that very recent Python releases hit on Windows and sometimes on Linux
-# distros too).
 set -euo pipefail
 
 PYBIN=""

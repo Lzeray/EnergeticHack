@@ -18,9 +18,6 @@ _LLM_KEYS = [
 
 
 def get_llm_config(session: Session) -> dict:
-    """Runtime LLM config: DB-stored overrides (set via the Settings page)
-    take precedence over the .env-backed defaults, so operators can switch
-    providers without restarting the process."""
     rows = {row.key: row.value for row in session.execute(select(models.AppSetting)).scalars()}
     config = {key: rows.get(key, getattr(settings, key)) for key in _LLM_KEYS}
     return config

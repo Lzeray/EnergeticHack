@@ -4,8 +4,6 @@ from app.llm.base import CLUSTER_LABEL_SYSTEM_PROMPT, SUMMARY_SYSTEM_PROMPT, LLM
 
 
 class AnthropicProvider(LLMProvider):
-    """Anthropic Claude API. Needs the `anthropic` package and an API key."""
-
     name = "anthropic"
 
     def __init__(self, api_key: str | None, model: str, timeout: float = 20.0):
@@ -13,7 +11,7 @@ class AnthropicProvider(LLMProvider):
             raise LLMUnavailableError("ANTHROPIC_API_KEY is not configured")
         try:
             import anthropic
-        except ImportError as exc:  # pragma: no cover - dependency is in requirements.txt
+        except ImportError as exc:  # pragma: no cover
             raise LLMUnavailableError("anthropic package is not installed") from exc
         self._client = anthropic.Anthropic(api_key=api_key, timeout=timeout)
         self.model = model

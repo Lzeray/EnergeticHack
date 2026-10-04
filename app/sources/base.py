@@ -12,8 +12,6 @@ from app.sources.safety import validate_outbound_url
 
 @dataclass
 class SourceRecord:
-    """One raw publication as produced by a source adapter, before normalization."""
-
     external_id: str
     url: str
     title: str
@@ -24,10 +22,6 @@ class SourceRecord:
 
 
 class SourceAdapter(ABC):
-    """Every adapter separates the network call (fetch_raw) from parsing (parse)
-    so parsing logic is unit-testable with recorded fixture payloads, with no
-    network access required in tests."""
-
     type_name: str
 
     def fetch_raw(self, config: dict) -> str:
@@ -42,7 +36,7 @@ class SourceAdapter(ABC):
 
     @abstractmethod
     def parse(self, raw: str, config: dict) -> list[SourceRecord]:
-        """Pure parsing: raw payload text -> list of SourceRecord. No I/O."""
+        pass
 
     def collect(self, config: dict) -> list[SourceRecord]:
         raw = self.fetch_raw(config)

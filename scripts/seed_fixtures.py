@@ -1,11 +1,3 @@
-"""Seeds the database with a demo corpus and demo profiles from
-data/fixtures/articles_sample.json, so the app is immediately usable without
-live network access. Safe to re-run: it is idempotent on (source name) and
-(profile name).
-
-Usage: python -m scripts.seed_fixtures
-"""
-
 from __future__ import annotations
 
 import datetime as dt

@@ -103,7 +103,7 @@ def fetch_source(source_id: int, session: Session = Depends(get_session)):
         source.last_error = None
         source.last_item_count = new_count
         source.last_fetch_at = dt.datetime.now(dt.timezone.utc)
-    except Exception as exc:  # noqa: BLE001 - surfaced to the operator via source health, not a 500
+    except Exception as exc:  # noqa: BLE001
         source.last_status = "error"
         source.last_error = str(exc)[:2000]
         source.last_fetch_at = dt.datetime.now(dt.timezone.utc)

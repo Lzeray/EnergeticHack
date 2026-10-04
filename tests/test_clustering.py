@@ -41,4 +41,4 @@ def test_clustering_groups_similar_topics_together():
     total_items = sum(len(s.items) for s in sections)
     assert total_items == len(articles)
     for section in sections:
-        assert section.label  # every section has a non-empty label
+        assert section.label

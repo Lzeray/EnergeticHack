@@ -33,7 +33,7 @@ def _run_for_all_profiles(period_type: str) -> None:
         for profile in profiles:
             try:
                 build_digest(session, profile, period_type, provider)
-            except Exception:  # noqa: BLE001 - one profile's failure must not block the others
+            except Exception:  # noqa: BLE001
                 logger.exception("Scheduled %s digest failed for profile %s", period_type, profile.id)
 
 

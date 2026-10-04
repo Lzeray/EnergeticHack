@@ -6,9 +6,6 @@ from app.llm.base import CLUSTER_LABEL_SYSTEM_PROMPT, SUMMARY_SYSTEM_PROMPT, LLM
 
 
 class OpenAICompatibleProvider(LLMProvider):
-    """Any OpenAI-compatible /chat/completions endpoint: OpenAI itself,
-    OpenRouter, vLLM, LM Studio, etc. — just point base_url at it."""
-
     name = "openai-compatible"
 
     def __init__(self, base_url: str, api_key: str | None, model: str, timeout: float = 20.0):

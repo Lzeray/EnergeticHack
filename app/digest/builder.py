@@ -21,11 +21,6 @@ RECENCY_HALF_LIFE_HOURS = {"daily": 48.0, "monthly": 24 * 20.0}
 
 
 class SelectionResult:
-    """Result of candidate gathering + dedup + ranking + top-K selection —
-    everything before LLM summarization and persistence. Shared by digest
-    generation and the profile-comparison view, which needs no LLM calls and
-    writes nothing to the database."""
-
     def __init__(
         self,
         pipeline_articles: list[PipelineArticle],
@@ -51,9 +46,6 @@ class SelectionResult:
 
 
 def _as_utc(value: dt.datetime | None) -> dt.datetime | None:
-    """SQLite has no native tz-aware datetime type, so values read back via
-    SQLAlchemy's DateTime(timezone=True) can come back naive even though they
-    were stored as UTC. Normalize here rather than at every call site."""
     if value is None:
         return None
     return value if value.tzinfo is not None else value.replace(tzinfo=dt.timezone.utc)

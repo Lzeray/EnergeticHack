@@ -2,10 +2,6 @@ from __future__ import annotations
 
 from app.pipeline.types import PipelineArticle
 
-# Rule-based (no LLM call, no parsing fragility) "what to do about this" line,
-# tailored to the audience. Deterministic and free, so it works even with
-# llm_provider="none" and costs nothing extra on top of the LLM summary.
-
 _TECHNICAL_CVE_ACTION = "Проверить версии ПО и применить патч/обновление."
 _TECHNICAL_RULES: list[tuple[tuple[str, ...], str]] = [
     (("ransomware", "шифровальщик", "вымогател"), "Проверить резервные копии, сегментацию сети и EDR-покрытие."),

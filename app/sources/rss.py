@@ -9,8 +9,6 @@ from app.sources.util import strip_html, struct_time_to_dt
 
 
 class RssAdapter(SourceAdapter):
-    """RSS/Atom feed adapter. config: {"url": str, "headers"?: dict}"""
-
     type_name = "rss"
 
     def parse(self, raw: str, config: dict) -> list[SourceRecord]:

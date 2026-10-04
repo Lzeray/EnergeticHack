@@ -12,7 +12,7 @@ from app.db import Base
 @pytest.fixture()
 def db_session():
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
-    from app import models  # noqa: F401 register models on Base metadata
+    from app import models  # noqa: F401
 
     Base.metadata.create_all(engine)
     session_local = sessionmaker(bind=engine)

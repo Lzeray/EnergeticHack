@@ -32,6 +32,6 @@ def test_supply_chain_keyword_triggers_cicd_action():
 
 def test_unrelated_article_gets_default_action():
     a = art("Квартальный отчёт компании", "Финансовые результаты за квартал.")
-    assert derive_action_line(a, "technical")  # non-empty default
-    assert derive_action_line(a, "management")  # non-empty default
+    assert derive_action_line(a, "technical")
+    assert derive_action_line(a, "management")
     assert derive_action_line(a, "technical") != derive_action_line(a, "management")

@@ -17,7 +17,7 @@ def _normalize_url(url: str) -> str:
 
 def _within_window(a: dt.datetime | None, b: dt.datetime | None, window_hours: int) -> bool:
     if a is None or b is None:
-        return True  # missing dates never block a merge on their own
+        return True
     return abs((a - b).total_seconds()) <= window_hours * 3600
 
 
@@ -26,11 +26,6 @@ def compute_dedup_groups(
     fuzzy_threshold: int = 87,
     window_hours: int = 72,
 ) -> list[DedupGroup]:
-    """Two-pass dedup: exact groups by normalized URL, then a greedy fuzzy
-    merge of remaining groups by title similarity within a time window.
-    Deterministic given the same input order (callers should sort by
-    published_at, id before calling for reproducible results)."""
-
     by_url: dict[str, list[PipelineArticle]] = {}
     for art in articles:
         by_url.setdefault(_normalize_url(art.url), []).append(art)

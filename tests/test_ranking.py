@@ -71,8 +71,6 @@ def test_feedback_boosts_matching_future_articles():
 
 
 def test_select_diverse_top_k_bypasses_cap_when_no_other_source_can_fill_slots():
-    # A single-source corpus: capping would just shrink the digest for no
-    # benefit, so all k slots get filled from the one available source.
     articles = [art(i, f"Story {i}", "CVE ransomware Kubernetes text " * 3, source_id=1) for i in range(10)]
     ranked = rank_articles(articles, "Приоритет: CVE ransomware Kubernetes", reference_time=NOW)
     selected = select_diverse_top_k(ranked, k=10, max_per_source_ratio=0.4)
@@ -80,10 +78,6 @@ def test_select_diverse_top_k_bypasses_cap_when_no_other_source_can_fill_slots()
 
 
 def test_select_diverse_top_k_does_not_let_dominant_source_crowd_out_a_relevant_minor_one():
-    # A prolific source with 20 relevant articles competes against a small
-    # source with only 3, equally relevant, articles. Without the cap, a
-    # source with this much more supply could take every top-k slot;
-    # capping it guarantees the minor source's relevant items still surface.
     dominant = [art(i, f"Dominant story {i}", "CVE ransomware Kubernetes уязвимость атака", source_id=1) for i in range(20)]
     minor = [art(100 + i, f"Minor story {i}", "CVE ransomware Kubernetes уязвимость атака", source_id=2) for i in range(3)]
     ranked = rank_articles(dominant + minor, "Приоритет: CVE ransomware Kubernetes", reference_time=NOW)
@@ -92,8 +86,8 @@ def test_select_diverse_top_k_does_not_let_dominant_source_crowd_out_a_relevant_
 
     counts = Counter(r.article.source_id for r in selected)
     assert len(selected) == 7
-    assert counts[1] <= 4  # ceil(7 * 0.4): the dominant source is capped
-    assert counts[2] == 3  # all of the minor source's relevant items still make it in
+    assert counts[1] <= 4  # ceil(7 * 0.4)
+    assert counts[2] == 3
 
 
 def test_why_breakdown_contains_expected_keys():

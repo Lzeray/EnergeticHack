@@ -12,10 +12,6 @@ logger = logging.getLogger(__name__)
 
 
 class FallbackProvider(LLMProvider):
-    """Wraps a primary provider; any failure (network error, missing model,
-    timeout, no API key) transparently falls back to extractive summarization
-    so digest generation never hard-fails for lack of LLM access."""
-
     def __init__(self, primary: LLMProvider, fallback: LLMProvider):
         self.primary = primary
         self.fallback = fallback
@@ -36,7 +32,7 @@ class FallbackProvider(LLMProvider):
     def summarize(self, title: str, text: str, audience: str = "technical") -> str:
         try:
             return self.primary.summarize(title, text, audience)
-        except Exception as exc:  # noqa: BLE001 - any provider failure must degrade gracefully
+        except Exception as exc:  # noqa: BLE001
             self._warn_once(exc)
             return self.fallback.summarize(title, text, audience)
 

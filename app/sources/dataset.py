@@ -80,17 +80,6 @@ def rows_to_records(rows: list[dict], field_map: dict) -> list[SourceRecord]:
 
 
 class DatasetAdapter(SourceAdapter):
-    """Loads a JSON or CSV dataset — the intended path for organizer-provided
-    example datasets, or any bulk export a team hands you.
-
-    config: {
-      "path": "relative/or/absolute/file.json",   # relative paths resolve under data/fixtures
-      "format"?: "json" | "csv",                    # inferred from extension if omitted
-      "items_path"?: "data.items",                   # dot-path to the list inside a JSON object
-      "field_map"?: {"id": "...", "url": "...", "title": "...", "text": "...", "date": "...", "language": "..."}
-    }
-    """
-
     type_name = "dataset"
 
     def fetch_raw(self, config: dict) -> str:

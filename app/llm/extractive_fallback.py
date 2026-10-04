@@ -12,11 +12,6 @@ _MAX_SUMMARY_CHARS = 320
 
 
 class ExtractiveProvider(LLMProvider):
-    """No-LLM fallback: takes the first couple of sentences of the article
-    (or the title, if the body is too short) instead of a generated
-    abstractive summary. Always available, used when no LLM is configured
-    or reachable, so the pipeline never hard-fails on missing LLM access."""
-
     name = "extractive"
 
     def summarize(self, title: str, text: str, audience: str = "technical") -> str:
@@ -45,7 +40,7 @@ class ExtractiveProvider(LLMProvider):
         for word, _ in counter.most_common(20):
             prefix = word[:5]
             if prefix in chosen_prefixes:
-                continue  # skip near-duplicate stems, e.g. "уязвимость" / "уязвимостей"
+                continue
             chosen_prefixes.add(prefix)
             chosen.append(word.capitalize())
             if len(chosen) == 3:

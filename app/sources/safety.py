@@ -9,11 +9,7 @@ _BLOCKED_HOSTNAMES = {"localhost", "metadata.google.internal"}
 
 
 class UnsafeURLError(ValueError):
-    """Raised when a URL a source adapter was about to fetch resolves to a
-    non-public address (loopback, private LAN, link-local/cloud metadata,
-    etc.) — refuses the request instead of letting a malicious or careless
-    source config turn the digest service into an SSRF proxy into the
-    operator's own network."""
+    pass
 
 
 def validate_outbound_url(url: str) -> None:
