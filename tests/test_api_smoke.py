@@ -86,3 +86,17 @@ def test_feedback_api_roundtrip(client):
 
     response = client.post("/api/feedback", json={"profile_id": 1, "article_id": 1, "action": "dislike"})
     assert response.json()["action"] == "dislike"
+
+
+def test_deleting_source_keeps_digest_and_metrics_working(client):
+    client.post("/profiles", data={"name": "P", "audience": "technical", "interests_text": "CVE, ransomware"})
+    client.post("/sources", data={"name": "S", "type": "dataset", "url_or_path": "articles_sample.json", "category": "", "priority": "1.0"})
+    client.post("/sources/1/fetch")
+    client.post("/digest/generate", data={"profile_id": "1", "period_type": "daily"})
+    client.post("/api/feedback", json={"profile_id": 1, "article_id": 1, "action": "like"})
+
+    resp = client.post("/sources/1/delete", follow_redirects=False)
+    assert resp.status_code == 303
+
+    assert client.get("/metrics").status_code == 200
+    assert client.get("/digest", params={"profile_id": 1, "period_type": "daily"}).status_code == 200

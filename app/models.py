@@ -48,6 +48,8 @@ class Article(Base):
     raw_meta: Mapped[dict] = mapped_column(JSON, default=dict)
 
     source: Mapped[Source] = relationship(back_populates="articles")
+    digest_items: Mapped[list["DigestArticle"]] = relationship(back_populates="article", cascade="all, delete")
+    feedback: Mapped[list["Feedback"]] = relationship(cascade="all, delete")
 
 
 class Profile(Base):
@@ -100,7 +102,7 @@ class DigestArticle(Base):
     order_index: Mapped[int] = mapped_column(Integer, default=0)
 
     digest_run: Mapped[DigestRun] = relationship(back_populates="items")
-    article: Mapped[Article] = relationship()
+    article: Mapped[Article] = relationship(back_populates="digest_items")
 
 
 class AppSetting(Base):
